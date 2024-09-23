@@ -15,3 +15,36 @@
 | ISP | 10.10.201.37/24 | 10.10.201.254 |
 | | HQ 172.16.4.1/28 |  |
 | | BR 172.16.5.1/28 |  |
+
+# HQ-RTR
+
+## Создание интерфейса, в сторону ISP
+
+Назначим ip-адрес
+```
+interface ge0
+description "ISP"
+ip address 172.16.5.2/28
+exit
+```
+
+Создаем service-instance с именем ge0/ge0
+```
+port ge0
+service-instance ge0/ge0
+encapsulation untagged
+connect ip interface ge0
+exit
+exit
+```
+
+## Команды для проверки
+```
+show port
+```
+```
+show port brief
+```
+```
+
+```
