@@ -15,8 +15,35 @@
 | ISP | 10.10.201.37/24 | 10.10.201.254 |
 | | HQ 172.16.4.1/28 |  |
 | | BR 172.16.5.1/28 |  |
+|HQ-RTR|ISP 172.16.4.2/28|172.16.4.1|
+| |HQ-SRV 10.10.10.1/26 | |
+| |HQ-CLI 10.10.20.1/28 | |
+|BR-RTR|ISP 172.16.5.2/28|172.16.5.1|
+| |BR-SRV 10.10.30.1/27 | |
 
 # HQ-RTR
+Задаем имя
+```
+hostname HQ-RTR
+```
+Меняем пароль для `admin`
+```
+username admin
+password toor
+exit
+```
+Отключаем автовыход из интерфейса
+```
+line console 0
+exec-timeout 0
+exit
+```
+Для VTY
+```
+line vty 0 871
+exec-timeout 0
+exit
+```
 
 ## Создание интерфейса, в сторону ISP
 
@@ -24,7 +51,7 @@
 ```
 interface ge0
 description "ISP"
-ip address 172.16.5.2/28
+ip address 172.16.4.2/28
 exit
 ```
 
