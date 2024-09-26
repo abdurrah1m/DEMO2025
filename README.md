@@ -131,7 +131,95 @@ show ip interface brief
 | BR-SRV | 10.10.30.2/27 | 10.10.30.1 |
 
 </details>
+
+# 2. Настройка ISP
+
+Настройте адресацию на интерфейсах  
+
+<details>
+  <summary>Интерфейс, подключенный к магистральному провайдеру, получает адрес по DHCP</summary>
   
-  
-  
-  
+```
+nano /etc/net/ifaces/ens18/options
+```
+```
+BOOTPROTO=dhcp
+```
+
+</details>
+
+<details>
+  <summary>Настройте маршруты по умолчанию там, где это необходимо</summary>
+
+
+
+</details>
+
+<details>
+  <summary>Интерфейс, к которому подключен HQ-RTR, подключен к сети 172.16.4.0/28</summary>
+
+```
+nano /etc/net/ifaces/ens19/options
+```
+```
+BOOTPROTO=static
+TYPE=eth
+NM_CONTROLLED=no
+DISABLED=no
+CONFIG_IPV4=yes
+```
+```
+nano /etc/net/ifaces/ens19/ipv4address
+```
+```
+172.16.4.1/28
+```
+
+</details>
+
+<details>
+  <summary>Интерфейс, к которому подключен BR-RTR, подключен к сети 172.16.5.0/28</summary>
+
+
+
+</details>
+
+<details>
+  <summary>На ISP настройте динамическую сетевую трансляцию в сторону HQ-RTR и BR-RTR для доступа к сети Интернет</summary>
+
+Отключить NetworkManager:
+```
+systemctl disable NetworkManager
+```
+Настройки интерфейсов должны быть такими:
+```
+...
+NM_CONTROLLED=no
+DISABLED=no
+...
+```
+Установка firewalld:
+```
+apt-get update && apt-get -y install firewalld && systemctl enable --now firewalld
+```
+Правила к исходящим пакетам (в сторону провайдера):
+```
+firewall-cmd --permanent --zone=public --add-interface=ens18
+```
+Правила к входящим пакетам (к локальной сети):
+```
+firewall-cmd --permanent --zone=trusted --add-interface=ens19
+```
+```
+firewall-cmd --permanent --zone=trusted --add-interface=ens20
+```
+Включение NAT:
+```
+firewall-cmd --permanent --zone=public --add-masquerade
+```
+Сохранение правил:
+```
+firewall-cmd --complete-reload
+```
+
+</details>
