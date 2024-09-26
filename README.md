@@ -180,7 +180,7 @@ nano /etc/net/ifaces/ens19/ipv4address
 <details>
   <summary>Интерфейс, к которому подключен BR-RTR, подключен к сети 172.16.5.0/28</summary>
 
-
+смотри выше
 
 </details>
 
@@ -227,15 +227,15 @@ firewall-cmd --complete-reload
 # 3. Создание локальных учетных записей
 
 Создайте пользователя sshuser на серверах HQ-SRV и BR-SRV  
-* &ensp; Пароль пользователя sshuser с паролем P@ssw0rd  
-* &ensp; Идентификатор пользователя 1010  
-* &ensp; Пользователь sshuser должен иметь возможность запускать sudo без дополнительной аутентификации.  
+* Пароль пользователя sshuser с паролем P@ssw0rd  
+* Идентификатор пользователя 1010  
+* Пользователь sshuser должен иметь возможность запускать sudo без дополнительной аутентификации.  
 
 <details>
-  <summary>---</summary>
+  <summary>VVV</summary>
 
 ```
-adduser sshuser
+adduser sshuser -u 1010
 passwd sshuser
 P@ssw0rd
 P@ssw0rd
@@ -246,3 +246,28 @@ sudo -i
 
 </details>
 
+Создайте пользователя net_admin на маршрутизаторах HQ-RTR и BR-RTR  
+* Пароль пользователя net_admin с паролем P@$$word  
+* При настройке на EcoRouter пользователь net_admin должен обладать максимальными привилегиями
+* При настройке ОС на базе Linux, запускать sudo без дополнительной аутентификации
+
+<details>
+  <summary>VVV</summary>
+
+```
+username net_admin
+password P@$$word
+role admin
+exit
+exit
+write
+```
+
+</details>
+
+# 4. Настройте на интерфейсе HQ-RTR в сторону офиса HQ виртуальный коммутатор
+
+* Сервер HQ-SRV должен находиться в ID VLAN 100
+* Клиент HQ-CLI в ID VLAN 200
+* Создайте подсеть управления с ID VLAN 999
+* Основные сведения о настройке коммутатора и выбора реализации разделения на VLAN занесите в отчёт
