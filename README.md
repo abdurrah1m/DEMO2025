@@ -223,3 +223,26 @@ firewall-cmd --complete-reload
 ```
 
 </details>
+
+# 3. Создание локальных учетных записей
+
+Создайте пользователя sshuser на серверах HQ-SRV и BR-SRV  
+* &ensp; Пароль пользователя sshuser с паролем P@ssw0rd  
+* &ensp; Идентификатор пользователя 1010  
+* &ensp; Пользователь sshuser должен иметь возможность запускать sudo без дополнительной аутентификации.  
+
+<details>
+  <summary>---</summary>
+
+```
+adduser sshuser
+passwd sshuser
+P@ssw0rd
+P@ssw0rd
+echo "sshuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+usermod -aG wheel sshuser
+sudo -i
+```
+
+</details>
+
