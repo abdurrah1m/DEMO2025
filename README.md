@@ -281,7 +281,7 @@ write
 
 # Модуль №2
 
-2. Сконфигурируйте файловое хранилище:  
+## 2. Сконфигурируйте файловое хранилище:  
 • При помощи трёх дополнительных дисков, размером 1Гб каждый, на HQ-SRV сконфигурируйте дисковый массив уровня 5  
 • Имя устройства – md0, конфигурация массива размещается в файле /etc/mdadm.conf  
 • Обеспечьте автоматическое монтирование в папку /raid5  
@@ -289,3 +289,106 @@ write
 • Настройте сервер сетевой файловой системы(nfs), в качестве папки общего доступа выберите /raid5/nfs, доступ для чтения и записи для всей сети в сторону HQ-CLI  
 • На HQ-CLI настройте автомонтирование в папку /mnt/nfs  
 • Основные параметры сервера отметьте в отчёте  
+
+## 5. Развертывание приложений в Docker на сервере BR-SRV.  
+• Создайте в домашней директории пользователя файл wiki.yml для приложения MediaWiki.  
+• Средствами docker compose должен создаваться стек контейнеров с приложением MediaWiki и базой данных.  
+• Используйте два сервиса  
+• Основной контейнер MediaWiki должен называться wiki и использовать образ mediawiki  
+• Файл LocalSettings.php с корректными настройками должен находиться в домашней папке пользователя и автоматически монтироваться в образ.  
+• Контейнер с базой данных должен называться mariadb и использовать образ mariadb.  
+• Разверните  
+• Он должен создавать базу с названием mediawiki, доступную по стандартному порту, пользователя wiki с паролем WikiP@ssw0rd должен иметь права доступа к этой базе данных  
+• MediaWiki должна быть доступна извне через порт 8080.  
+
+Установка Docker и Docker-compose:
+```
+apt-get update && apt-get install -y docker-engine
+apt-get install -y docker-compose
+```
+Автозагрузка `Docker`:
+```
+systemctl enable --now docker
+```
+Привязка пользователя к `Docker`:
+```
+usermod user -aG docker
+```
+Переходим к домашней директории пользователя:
+```
+cd /home/user
+```
+Создаём файл wiki.yml:
+```
+touch wiki.yml
+```
+```yml
+version: '3'
+services:
+  wiki:
+    image: mediawiki
+    restart: always
+    ports:
+      - 8080:80
+    links:
+      - database
+    container_name: wiki
+    volumes:
+      - images:/var/www/html/images
+# Сначала устанавливаем вручную до конца, потом убираем комментарий
+#      - ./LocalSettings.php:/var/www/html/LocalSettings.php
+  database:
+    image: mariadb
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: mediawiki
+      MYSQL_USER: wiki
+      MYSQL_PASSWORD: WikiP@ssw0rd
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      TZ: Asia/Yekaterinburg
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  images:
+  db:
+```
+Запускаем контейнеры:
+```
+docker compose -f wiki.yml up -d
+```
+Переходим по `<ip-сервера>:8080` и должно появиться - 'Please set up the wiki first'
+
+![image](https://github.com/user-attachments/assets/7f31fa74-9b7d-448b-b151-60fea4101b68)
+
+Для того, чтобы узнать хост базы данных:
+```
+docker exec -it mariadb bash
+```
+```
+hostname -i
+```
+Вывод
+```
+172.18.0.2
+```
+
+![image](https://github.com/user-attachments/assets/fad6ff4f-29a2-42ce-9895-7bc551386a0b)
+
+Принимаем условия `Далее`
+
+![image](https://github.com/user-attachments/assets/d5a8a841-be14-4e63-a779-bbdcda6ff6ea)
+
+![image](https://github.com/user-attachments/assets/b1b2d5ab-a628-4e0f-9129-21e50a2bc2b2)
+
+![image](https://github.com/user-attachments/assets/d82f8c7c-ba3a-446d-b1e2-3b58328f8fee)
+
+![image](https://github.com/user-attachments/assets/c68ab5ec-5082-4912-a008-85ad0d5ed584)
+
+![image](https://github.com/user-attachments/assets/0d147398-8dea-4c79-a73d-3dceb421d349)
+
+![image](https://github.com/user-attachments/assets/f5546510-c41f-46e0-a73f-893596047481)
+
+![image](https://github.com/user-attachments/assets/04b4e49e-5bba-4cb3-9f66-40bf299be64e)
+
+![image](https://github.com/user-attachments/assets/7ebd8118-bd70-4a41-9b82-b5a52ae04a67)
