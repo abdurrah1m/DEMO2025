@@ -1,3 +1,5 @@
+https://wiki.blacksprut.pro/SSA/%D0%94%D0%B5%D0%BC%D0%BE%D0%BD%D1%81%D1%82%D1%80%D0%B0%D1%86%D0%B8%D0%BE%D0%BD%D0%BD%D1%8B%D0%B9_%D1%8D%D0%BA%D0%B7%D0%B0%D0%BC%D0%B5%D0%BD/2025
+
 ![image](https://github.com/user-attachments/assets/5e93864e-93db-42b9-ac98-494d5679c599)
 
 | Машина | RAM, ГБ | CPU | HDD/SSD, ГБ | OS |
